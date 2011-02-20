@@ -28,7 +28,8 @@ module Rack::Modulr
           option_name(:root)      => ".",
           option_name(:source)    => 'app/javascripts',
           option_name(:public)    => 'public',
-          option_name(:hosted_at) => '/javascripts'
+          option_name(:hosted_at) => '/javascripts',
+          option_name(:modulr)    => {}
         }
       end
 
@@ -87,25 +88,23 @@ module Rack::Modulr
 
       private
 
-      def initialize_options(options={})
-        @default_options = self.class.defaults
-        self.options = options
-      end
+        def initialize_options(options={})
+          @default_options = self.class.defaults
+          self.options = options
+        end
 
-      def read_option(key)
-        options[option_name(key)]
-      end
+        def read_option(key)
+          options[option_name(key)]
+        end
 
-      def write_option(key, value)
-        options[option_name(key)] = value
-      end
-
+        def write_option(key, value)
+          options[option_name(key)] = value
+        end
     end
     
     def self.included(receiver)
       receiver.extend         ClassMethods
       receiver.send :include, InstanceMethods
     end
-    
   end
 end

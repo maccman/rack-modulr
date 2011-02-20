@@ -38,8 +38,7 @@ module Rack::Modulr
     end
     
     def to_rack
-      [status, headers.to_hash, body]
+      [status, headers.to_hash, [body]]
     end
-
   end
 end

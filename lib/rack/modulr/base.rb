@@ -6,7 +6,7 @@ module Rack::Modulr
   class Base
     include Rack::Modulr::Options
 
-    def initialize(app, options={})
+    def initialize(app, options = {})
       @app = app
       initialize_options options
       yield self if block_given?
@@ -14,7 +14,7 @@ module Rack::Modulr
     end
 
     # The Rack call interface. The receiver acts as a prototype and runs
-    # each request in a clone object unmodulr the +rack.run_once+ variable is
+    # each request in a clone object unless the +rack.run_once+ variable is
     # set in the environment.
     # ripped from: http://github.com/rtomayko/rack-cache/blob/master/lib/rack/cache/context.rb
     def call(env)
@@ -45,13 +45,13 @@ module Rack::Modulr
 
       def validate_options
         # ensure a root path is specified and does exists
-        unmodulr options.has_key?(option_name(:root)) and !options(:root).nil?
+        unless options.has_key?(option_name(:root)) and !options(:root).nil?
           raise(ArgumentError, "no :root option set")
         end
         set :root, File.expand_path(options(:root))
 
         # ensure a source path is specified and does exists
-        unmodulr options.has_key?(option_name(:source)) and !options(:source).nil?
+        unless options.has_key?(option_name(:source)) and !options(:source).nil?
           raise(ArgumentError, "no :source option set")
         end
       end

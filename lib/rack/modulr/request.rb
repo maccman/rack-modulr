@@ -51,8 +51,9 @@ module Rack::Modulr
     def source
       @source ||= begin
         source_opts = {
-          :folder   => File.join(options(:root), options(:source))
-        }.merge(Rack::Modulr.config.modulr)
+          :folder => File.join(options(:root), options(:source)),
+          :modulr => options(:modulr)
+        }
         Source.new(path_resource_source, source_opts)
       end
     end

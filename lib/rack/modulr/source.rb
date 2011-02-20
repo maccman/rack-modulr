@@ -13,9 +13,10 @@ module Rack::Modulr
 
     attr_reader :path
 
-    def initialize(path, options={})
-      @path   = path
-      @folder = get_required_path(options, :folder)
+    def initialize(path, options = {})
+      @path    = path
+      @folder  = get_required_path(options, :folder)
+      @options = options.delete(:modulr)
     end
 
     # Use named JS sources before using combination sources
@@ -24,7 +25,9 @@ module Rack::Modulr
     end
 
     def compiled
-      @compiled ||= Modulr.ize(files)
+      @compiled = files.collect do |file_path|
+        Modulr.ize(file_path, @options)
+      end.join("\n")
     end
     alias_method :to_js, :compiled
     alias_method :js, :compiled
