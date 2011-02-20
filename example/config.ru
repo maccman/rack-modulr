@@ -1,6 +1,6 @@
 $: << File.join(File.dirname(__FILE__), *%w[ .. lib ])
 require "rack/modulr"
 
-use Rack::Modulr, :modulr => {:minify => true}
+use Rack::Modulr, :modulr => {:minify => false}
 
-run Proc.new { [200, {"Content-Type" => "text/html"}, []] }
+run Rack::Directory.new("public")

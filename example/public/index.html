@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>rack-modulr</title>
+  
+  <script src="/javascripts/yabble.js"></script>
+  <script type="text/javascript" charset="utf-8">
+    require.setModuleRoot("javascripts");
+    require.useScriptTags();
+    require.ensure(["application"], function(require) {
+      // application loaded
+    });
+  </script>
+</head>
+<body>
+</body>
+</html>
