@@ -13,12 +13,22 @@ module Rack::Modulr
       yield self if block_given?
       validate_options
     end
+    
+    def call(env)
+      # This is an unpleasant way of getting the current environment, working out
+      # whether we need to reload all the modules or not
+      if env['rack.run_once'] || ENV['RACK_ENV'] == 'production'
+        call! env
+      else
+        clone.call! env
+      end
+    end
 
     # If CommonJS modules are being requested, this is an endpoint:
     # => generate the compiled js
     # => respond appropriately
     # Otherwise, call on up to the app as normal
-    def call(env)
+    def call!(env)
       @default_options.each { |k,v| env[k] ||= v }
       @env = env.dup.freeze
 
