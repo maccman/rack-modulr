@@ -16,7 +16,9 @@ For example with Rack:
 Or with Rails:
 
     // Gemfile
-    gem "rack-modulr"
+
+    gem "modulr",      :git => "git://github.com/maccman/modulr.git"    
+    gem "rack-modulr", :git => "git://github.com/maccman/rack-modulr.git"
     
     // config/application.rb
     require "rack/modulr"
