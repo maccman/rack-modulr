@@ -5,6 +5,7 @@ require 'rack/modulr/response'
 module Rack::Modulr
   class Base
     include Rack::Modulr::Options
+    YEAR_IN_SECONDS = 31540000
 
     def initialize(app, options = {})
       @app = app
