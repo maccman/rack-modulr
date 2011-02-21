@@ -13,35 +13,55 @@ module Rack::Modulr
       validate_options
     end
 
-    # The Rack call interface. The receiver acts as a prototype and runs
-    # each request in a clone object unless the +rack.run_once+ variable is
-    # set in the environment.
-    # ripped from: http://github.com/rtomayko/rack-cache/blob/master/lib/rack/cache/context.rb
-    def call(env)
-      if env['rack.run_once']
-        call! env
-      else
-        clone.call! env
-      end
-    end
-
-    # The real Rack call interface.
-    # if CommonJS modules are being requested, this is an endpoint:
+    # If CommonJS modules are being requested, this is an endpoint:
     # => generate the compiled js
     # => respond appropriately
     # Otherwise, call on up to the app as normal
-    def call!(env)
+    def call(env)
       @default_options.each { |k,v| env[k] ||= v }
-      @env = env
+      @env = env.dup.freeze
 
-      if (@request = Request.new(@env.dup.freeze)).for_modulr?
-        Response.new(@env.dup.freeze, @request.source.to_js).to_rack
+      if (@request = Request.new(@env)).for_modulr?
+        response = Response.new(@env, source_for(@request))
+        cache(response) { response.to_rack }
       else
         @app.call(env)
       end
     end
 
-    private
+    protected
+    
+      def cache(response)
+        env     = response.env
+        headers = response.headers
+        
+        headers["Cache-Control"]  = "public, must-revalidate"
+        if env["QUERY_STRING"] == response.md5
+          headers["Cache-Control"] << ", max-age=#{YEAR_IN_SECONDS}"
+        end
+
+        headers["ETag"]           = %("#{response.md5}")
+        headers["Last-Modified"]  = response.last_modified.httpdate
+        
+        if etag = env["HTTP_IF_NONE_MATCH"]
+          return [304, headers.to_hash, []] if etag == headers["ETag"]
+        end
+
+        if time = env["HTTP_IF_MODIFIED_SINCE"]
+          return [304, headers.to_hash, []] if time == headers["Last-Modified"]
+        end
+        
+        yield
+      end
+      
+      def source_for(request)
+        @source ||= request.source
+                
+        previous_last_modified, @last_modified = @last_modified, @source.mtime
+        unchanged = previous_last_modified == @last_modified
+        
+        unchanged ? @source : (@source = request.source)
+      end
 
       def validate_options
         # ensure a root path is specified and does exists

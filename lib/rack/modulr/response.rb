@@ -10,35 +10,37 @@ module Rack::Modulr
     include Rack::Response::Helpers
 
     # Rack response tuple accessors.
-    attr_accessor :status, :headers, :body
-    
-    class << self
+    attr_accessor :status, :headers, :body, :source, :env
 
-      # Calculate appropriate content_length
-      def content_length(body)
-        if body.respond_to?(:bytesize)
-          body.bytesize
-        else
-          body.size
-        end
-      end
-      
-    end
-
-    # Create a Response instance given the env
-    # and some generated js.
-    def initialize(env, js)
-      @env = env
-      @body = js
-      @status = 200 # OK
-      @headers = Rack::Utils::HeaderHash.new
-
-      headers["Content-Type"] = Rack::Modulr::MIME_TYPE
-      headers["Content-Length"] = self.class.content_length(body).to_s
+    def initialize(env, source)
+      @env     = env
+      @source  = source
+      @body    = source.to_js
+      @status  = 200 # OK
+      @headers = Rack::Utils::HeaderHash.new     
     end
     
     def to_rack
-      [status, headers.to_hash, [body]]
+      headers["Content-Type"]   = Rack::Modulr::MIME_TYPE
+      headers["Content-Length"] = self.content_length.to_s
+      
+      [status, headers.to_hash, env["REQUEST_METHOD"] == "HEAD" ? [] : [body]]
+    end
+    
+    def last_modified
+      source.mtime
+    end
+    
+    def md5
+      source.md5
+    end
+  
+    def content_length
+      if body.respond_to?(:bytesize)
+        body.bytesize
+      else
+        body.size
+      end
     end
   end
 end

@@ -56,7 +56,7 @@ Modulr injects a module loader library but if you want to use a different one, l
   
     use Rack::Modulr, :modulr => {:custom_loader => true}
     
-To add caching, use the [Rack::Cache](http://rtomayko.github.com/rack-cache) component.
+Rack::Modulr caches the compiled modules in memory. Every request, the request module will be checked, to see if it's mtime has changed. If the module hasn't been changed, it'll be served from memory if possible. 
 
 ----------------------------------------------------  
   
