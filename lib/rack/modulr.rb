@@ -1,5 +1,6 @@
 require 'rack'
 require 'rack/modulr/base'
+require 'rack/modulr/config'
 require 'rack/modulr/request'
 require 'rack/modulr/response'
 require 'rack/modulr/source'
@@ -20,6 +21,22 @@ require 'rack/modulr/source'
 
 module Rack::Modulr
   MIME_TYPE = "text/javascript"
+
+  class << self
+    # Configuration accessors for Rack::Modulr
+    # (see config.rb for details)
+    def configure
+      yield config if block_given?
+    end
+  
+    def config
+      @config ||= Config.new
+    end
+  
+    def config=(value)
+      @config = value
+    end
+  end
   
   # Create a new Rack::Modulr middleware component 
   # => the +options+ Hash can be used to specify default configuration values

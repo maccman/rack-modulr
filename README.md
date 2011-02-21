@@ -58,6 +58,14 @@ Modulr injects a module loader library but if you want to use a different one, l
     
 Rack::Modulr caches the compiled modules in memory. Every request, the request module will be checked, to see if it's mtime has changed. If the module hasn't been changed, it'll be served from memory if possible. 
 
+By defaulting, caching and minification are turned off. To turn them on in the production environment, for example, set the global settings on Rack::Modulr.
+    
+    // production.rb
+    Rack::Modulr.configure do |config|
+      config.cache  = true
+      config.minify = true
+    end
+
 ----------------------------------------------------  
   
 Based on [Kelly Redding's](https://github.com/kelredd) great work on [rack-less](http://github.com/kelredd/rack-less).
