@@ -1,6 +1,5 @@
 require 'rubygems'
 require 'rake/gempackagetask'
-require 'simple_gem/testtasks'
 
 require 'lib/rack/modulr/version'
 
@@ -20,8 +19,6 @@ end
 Rake::GemPackageTask.new(spec) do |pkg|
   pkg.gem_spec = spec
 end
-
-SimpleGem::TestTasks.new
 
 desc 'Generate the gemspec to serve this gem'
 task :gemspec do
