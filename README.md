@@ -46,15 +46,15 @@ When the browser requests a module, all its dependencies will be recursively res
         }
       });
       
-      require.ensure(['utils'], function() {
+      require.ensure(['utils'], function(require) {
         var utils = require("./utils");
         console.log(utils.sum(1, 2));
       });
     })();
-    
-You'll still need a module loader library like [yabble](https://github.com/jbrantly/yabble). Or, the alternative is to pass the `:add_lib` option to `Rack::Modulr`:
+
+Modulr injects a module loader library but if you want to use a different one, like  [Yabble](https://github.com/jbrantly/yabble), you'll need to pass the `:custom_loader` option to `Rack::Modulr`:
   
-    use Rack::Modulr, :modulr => {:add_lib => true}
+    use Rack::Modulr, :modulr => {:custom_loader => true}
     
 To add caching, use the [Rack::Cache](http://rtomayko.github.com/rack-cache) component.
 
